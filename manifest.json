@@ -1,0 +1,9 @@
+{
+  "name": "Presupuesto",
+  "short_name": "Presupuesto",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ECEEE6",
+  "theme_color": "#1E2A33",
+  "icons": []
+}
