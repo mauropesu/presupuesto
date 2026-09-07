@@ -113,7 +113,10 @@
       <section id="view-ingresos" class="view">
         <div class="view-head">
           <h2>Ingresos</h2>
-          <button class="btn-add" data-form="form-ingreso">+ Nuevo</button>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <button id="btn-clear-ingresos" class="btn-text" style="color:var(--expense)">Borrar todo</button>
+            <button class="btn-add" data-form="form-ingreso">+ Nuevo</button>
+          </div>
         </div>
 
         <form id="form-ingreso" class="entry-form hidden">
@@ -147,7 +150,10 @@
       <section id="view-gastos" class="view">
         <div class="view-head">
           <h2>Gastos</h2>
-          <button class="btn-add" data-form="form-gasto">+ Nuevo</button>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <button id="btn-clear-gastos" class="btn-text" style="color:var(--expense)">Borrar todo</button>
+            <button class="btn-add" data-form="form-gasto">+ Nuevo</button>
+          </div>
         </div>
 
         <form id="form-gasto" class="entry-form hidden">
