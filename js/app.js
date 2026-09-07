@@ -359,7 +359,6 @@ function renderResumen() {
   document.getElementById("total-gastos").textContent = fmtCOP.format(totalGastos);
   document.getElementById("balance-periodo").textContent = fmtCOP.format(totalIngresos - totalGastos);
 
-  // Balance acumulado: siempre con TODOS los registros, sin importar el filtro.
   const totalIngresosAll = incomes.reduce((s, i) => s + i.montoCOP, 0);
   const totalGastosAll = expenses.reduce((s, g) => s + g.montoCOP, 0);
   const balanceAcumulado = (settings.saldoAnterior || 0) + totalIngresosAll - totalGastosAll;
@@ -402,4 +401,92 @@ function renderChartIngresos(lista) {
   if (chartIngresos) chartIngresos.destroy();
   chartIngresos = new Chart(canvas, {
     type: "pie",
-    data: { labels, datasets: [{ data,
+    data: { labels, datasets: [{ data, backgroundColor: palette(labels.length) }] },
+    options: { plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } } } },
+  });
+}
+
+function palette(n) {
+  const base = ["#2F6F4E","#A87C1D","#A23B3B","#5B6B70","#1E2A33","#7A9B6E","#C9A227","#7A4B4B","#8FA6AB","#3D5A4C"];
+  return Array.from({ length: n }, (_, i) => base[i % base.length]);
+}
+
+/* ---------------- Ajustes ---------------- */
+
+function renderAjustes() {
+  document.getElementById("ajuste-saldo-anterior").value = settings.saldoAnterior;
+  document.getElementById("ajuste-trm").value = settings.trmHoy;
+
+  const fuentesList = document.getElementById("lista-fuentes");
+  fuentesList.innerHTML = settings.fuentes.map((f, idx) => `
+    <li>
+      ${escapeHtml(f.nombre)}
+      <span class="tag-usd" data-toggle-fuente="${idx}" style="cursor:pointer">${f.moneda}</span>
+      <button data-del-fuente="${idx}" aria-label="Quitar">×</button>
+    </li>
+  `).join("");
+
+  const categoriasList = document.getElementById("lista-categorias");
+  categoriasList.innerHTML = settings.categorias.map((c, idx) => `
+    <li>${escapeHtml(c)}<button data-del-categoria="${idx}" aria-label="Quitar">×</button></li>
+  `).join("");
+
+  fuentesList.querySelectorAll("[data-toggle-fuente]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const idx = Number(el.dataset.toggleFuente);
+      const nuevas = settings.fuentes.map((f, i) => i === idx ? { ...f, moneda: f.moneda === "USD" ? "COP" : "USD" } : f);
+      saveSettings({ fuentes: nuevas });
+    });
+  });
+  fuentesList.querySelectorAll("[data-del-fuente]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.delFuente);
+      saveSettings({ fuentes: settings.fuentes.filter((_, i) => i !== idx) });
+    });
+  });
+  categoriasList.querySelectorAll("[data-del-categoria]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.delCategoria);
+      saveSettings({ categorias: settings.categorias.filter((_, i) => i !== idx) });
+    });
+  });
+}
+
+function saveSettings(partial) {
+  return db.collection("users").doc(currentUser.uid).set(partial, { merge: true });
+}
+
+document.getElementById("btn-guardar-ajustes").addEventListener("click", () => {
+  saveSettings({
+    saldoAnterior: parseFloat(document.getElementById("ajuste-saldo-anterior").value || 0),
+    trmHoy: parseFloat(document.getElementById("ajuste-trm").value || 0),
+  });
+});
+
+document.getElementById("btn-add-fuente").addEventListener("click", () => {
+  const input = document.getElementById("nueva-fuente");
+  const nombre = input.value.trim();
+  if (!nombre) return;
+  saveSettings({ fuentes: [...settings.fuentes, { nombre, moneda: "COP" }] });
+  input.value = "";
+});
+
+document.getElementById("btn-add-categoria").addEventListener("click", () => {
+  const input = document.getElementById("nueva-categoria");
+  const nombre = input.value.trim();
+  if (!nombre) return;
+  saveSettings({ categorias: [...settings.categorias, nombre] });
+  input.value = "";
+});
+
+/* ---------------- Utilidades ---------------- */
+
+function fmtFecha(iso) {
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}`;
+}
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
