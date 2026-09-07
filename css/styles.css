@@ -576,6 +576,46 @@ input, select {
   background: var(--bg);
 }
 
+/* ============ Cuentas bancarias ============ */
+.account-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.account-name { flex: 1; font-size: 13.5px; }
+.account-balance {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  width: 130px;
+  text-align: right;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 5px 8px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.account-row button {
+  background: none;
+  border: none;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+.account-row button:hover { color: var(--expense); }
+.account-row-static {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+}
+.account-row-static .account-balance-display {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ============ Responsive ============ */
 @media (max-width: 640px) {
   .tabs { display: none; }

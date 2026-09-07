@@ -67,7 +67,12 @@
         <div class="hero">
           <p class="hero-label">Balance total acumulado</p>
           <p class="hero-number" id="balance-acumulado">$0</p>
-          <p class="hero-sub">Incluye tu saldo anterior. No cambia con el filtro de mes.</p>
+          <p class="hero-sub">Suma de tus cuentas bancarias + ingresos − gastos. No cambia con el filtro de mes.</p>
+        </div>
+
+        <div class="ledger-block" style="margin-bottom: 20px;">
+          <p class="chart-title">Cuentas bancarias</p>
+          <div id="resumen-cuentas" class="account-list"></div>
         </div>
 
         <div class="stat-row">
@@ -202,14 +207,22 @@
         <h2>Ajustes</h2>
 
         <div class="settings-block">
-          <label class="settings-label">Saldo anterior (antes de este presupuesto)
-            <input type="number" id="ajuste-saldo-anterior" step="1" />
-          </label>
           <label class="settings-label">TRM de hoy (USD → COP)
             <input type="number" id="ajuste-trm" step="0.01" />
           </label>
           <button id="btn-guardar-ajustes" class="btn-primary">Guardar</button>
           <p class="settings-hint">Actualiza la TRM el día que registres un ingreso o gasto en dólares. Consúltala en banrep.gov.co.</p>
+        </div>
+
+        <div class="settings-block">
+          <p class="settings-title">Cuentas bancarias</p>
+          <div id="lista-cuentas" class="account-list"></div>
+          <div class="tag-add">
+            <input type="text" id="nueva-cuenta-nombre" placeholder="Ej. Nu - Cajita de ahorro" />
+            <input type="number" id="nueva-cuenta-saldo" placeholder="Saldo inicial" step="1" style="max-width:140px" />
+            <button id="btn-add-cuenta" class="btn-text">Añadir</button>
+          </div>
+          <p class="settings-hint">La suma de todas tus cuentas es el punto de partida del balance acumulado.</p>
         </div>
 
         <div class="settings-block">
