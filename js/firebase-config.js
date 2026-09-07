@@ -3,12 +3,12 @@
 // Ver README.md para el paso a paso completo.
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROYECTO",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID",
+  apiKey: "AIzaSyDjkBtk8aaLhJjGV224JJDYK-_EdgX0lys",
+  authDomain: "finanzas-12bdd.firebaseapp.com",
+  projectId: "finanzas-12bdd",
+  storageBucket: "finanzas-12bdd.firebasestorage.app",
+  messagingSenderId: "143993790118",
+  appId: "1:143993790118:web:e48430d87f01f0f7e71e67",
 };
 
 firebase.initializeApp(firebaseConfig);
