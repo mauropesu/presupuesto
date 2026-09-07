@@ -231,6 +231,30 @@ function attachDelete(container, coleccion) {
   });
 }
 
+async function clearCollection(etiqueta, coleccion, lista) {
+  if (lista.length === 0) {
+    alert(`No tienes ${etiqueta} registrados.`);
+    return;
+  }
+  const ok = confirm(`¿Seguro que quieres borrar TODOS tus ${etiqueta} (${lista.length} registros)? Esta acción no se puede deshacer.`);
+  if (!ok) return;
+
+  const ref = db.collection("users").doc(currentUser.uid).collection(coleccion);
+  for (let i = 0; i < lista.length; i += 450) {
+    const chunk = lista.slice(i, i + 450);
+    const batch = db.batch();
+    chunk.forEach((item) => batch.delete(ref.doc(item.id)));
+    await batch.commit();
+  }
+}
+
+document.getElementById("btn-clear-ingresos").addEventListener("click", () => {
+  clearCollection("ingresos", "incomes", incomes);
+});
+document.getElementById("btn-clear-gastos").addEventListener("click", () => {
+  clearCollection("gastos", "expenses", expenses);
+});
+
 /* ---------------- Render: Ingresos ---------------- */
 
 function renderIngresos() {
