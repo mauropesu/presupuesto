@@ -9,6 +9,8 @@
   --expense: #A23B3B;
   --gold: #A87C1D;
   --focus: #2F6F4E;
+  --hero-bg: #1E2A33;
+  --hero-fg: #F3F5EF;
 
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
@@ -20,6 +22,7 @@
 /* Modo oscuro cuando el sistema lo pide, salvo que el usuario haya elegido "Claro" a mano */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="claro"]) {
+    color-scheme: dark;
     --bg: #14191C;
     --surface: #1D2327;
     --ink: #ECEEE6;
@@ -28,11 +31,14 @@
     --income: #4FAE7C;
     --expense: #D9695F;
     --gold: #D1A63B;
+    --hero-bg: #24313A;
+    --hero-fg: #EDEFEA;
   }
 }
 
 /* Modo oscuro elegido a mano, sin importar el sistema */
 :root[data-theme="oscuro"] {
+  color-scheme: dark;
   --bg: #14191C;
   --surface: #1D2327;
   --ink: #ECEEE6;
@@ -41,6 +47,12 @@
   --income: #4FAE7C;
   --expense: #D9695F;
   --gold: #D1A63B;
+  --hero-bg: #24313A;
+  --hero-fg: #EDEFEA;
+}
+
+:root[data-theme="claro"] {
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -260,11 +272,12 @@ input, select {
   border-radius: 8px;
   padding: 6px 10px;
   background: var(--surface);
+  color: var(--ink);
 }
 
 .hero {
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--hero-bg);
+  color: var(--hero-fg);
   border-radius: var(--radius);
   padding: 26px 24px;
   margin-bottom: 16px;
