@@ -6,8 +6,8 @@ const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio",
                "Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
 const DEFAULT_SETTINGS = {
-  saldoAnterior: 0,
   trmHoy: 4100,
+  cuentas: [],
   fuentes: [
     { nombre: "SLB", moneda: "COP" },
     { nombre: "Consultoría", moneda: "USD" },
@@ -359,13 +359,29 @@ function renderResumen() {
   document.getElementById("total-gastos").textContent = fmtCOP.format(totalGastos);
   document.getElementById("balance-periodo").textContent = fmtCOP.format(totalIngresos - totalGastos);
 
+  // Balance acumulado: saldo de todas las cuentas + TODOS los ingresos y gastos, sin importar el filtro.
   const totalIngresosAll = incomes.reduce((s, i) => s + i.montoCOP, 0);
   const totalGastosAll = expenses.reduce((s, g) => s + g.montoCOP, 0);
-  const balanceAcumulado = (settings.saldoAnterior || 0) + totalIngresosAll - totalGastosAll;
+  const totalCuentas = (settings.cuentas || []).reduce((s, c) => s + (c.saldo || 0), 0);
+  const balanceAcumulado = totalCuentas + totalIngresosAll - totalGastosAll;
   document.getElementById("balance-acumulado").textContent = fmtCOP.format(balanceAcumulado);
 
+  renderResumenCuentas();
   renderChartGastos(gasFiltrados);
   renderChartIngresos(incFiltrados);
+}
+
+function renderResumenCuentas() {
+  const cont = document.getElementById("resumen-cuentas");
+  const cuentas = settings.cuentas || [];
+  cont.innerHTML = cuentas.length === 0
+    ? '<p class="ledger-empty">Aún no agregas cuentas bancarias (ve a Ajustes).</p>'
+    : cuentas.map((c) => `
+        <div class="account-row-static">
+          <span>${escapeHtml(c.nombre)}</span>
+          <span class="account-balance-display">${fmtCOP.format(c.saldo || 0)}</span>
+        </div>
+      `).join("");
 }
 
 function renderChartGastos(lista) {
@@ -414,8 +430,30 @@ function palette(n) {
 /* ---------------- Ajustes ---------------- */
 
 function renderAjustes() {
-  document.getElementById("ajuste-saldo-anterior").value = settings.saldoAnterior;
   document.getElementById("ajuste-trm").value = settings.trmHoy;
+
+  const cuentasList = document.getElementById("lista-cuentas");
+  cuentasList.innerHTML = (settings.cuentas || []).map((c, idx) => `
+    <div class="account-row">
+      <span class="account-name">${escapeHtml(c.nombre)}</span>
+      <input type="number" class="account-balance" step="1" value="${c.saldo || 0}" data-cuenta-saldo="${idx}" />
+      <button data-del-cuenta="${idx}" aria-label="Quitar">×</button>
+    </div>
+  `).join("");
+
+  cuentasList.querySelectorAll("[data-cuenta-saldo]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const idx = Number(input.dataset.cuentaSaldo);
+      const nuevas = settings.cuentas.map((c, i) => i === idx ? { ...c, saldo: parseFloat(input.value || 0) } : c);
+      saveSettings({ cuentas: nuevas });
+    });
+  });
+  cuentasList.querySelectorAll("[data-del-cuenta]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.delCuenta);
+      saveSettings({ cuentas: settings.cuentas.filter((_, i) => i !== idx) });
+    });
+  });
 
   const fuentesList = document.getElementById("lista-fuentes");
   fuentesList.innerHTML = settings.fuentes.map((f, idx) => `
@@ -458,9 +496,19 @@ function saveSettings(partial) {
 
 document.getElementById("btn-guardar-ajustes").addEventListener("click", () => {
   saveSettings({
-    saldoAnterior: parseFloat(document.getElementById("ajuste-saldo-anterior").value || 0),
     trmHoy: parseFloat(document.getElementById("ajuste-trm").value || 0),
   });
+});
+
+document.getElementById("btn-add-cuenta").addEventListener("click", () => {
+  const nombreInput = document.getElementById("nueva-cuenta-nombre");
+  const saldoInput = document.getElementById("nueva-cuenta-saldo");
+  const nombre = nombreInput.value.trim();
+  if (!nombre) return;
+  const saldo = parseFloat(saldoInput.value || 0);
+  saveSettings({ cuentas: [...(settings.cuentas || []), { nombre, saldo }] });
+  nombreInput.value = "";
+  saldoInput.value = "";
 });
 
 document.getElementById("btn-add-fuente").addEventListener("click", () => {
