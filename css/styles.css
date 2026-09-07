@@ -17,6 +17,32 @@
   --radius: 10px;
 }
 
+/* Modo oscuro cuando el sistema lo pide, salvo que el usuario haya elegido "Claro" a mano */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="claro"]) {
+    --bg: #14191C;
+    --surface: #1D2327;
+    --ink: #ECEEE6;
+    --ink-soft: #93A0A3;
+    --line: #33393C;
+    --income: #4FAE7C;
+    --expense: #D9695F;
+    --gold: #D1A63B;
+  }
+}
+
+/* Modo oscuro elegido a mano, sin importar el sistema */
+:root[data-theme="oscuro"] {
+  --bg: #14191C;
+  --surface: #1D2327;
+  --ink: #ECEEE6;
+  --ink-soft: #93A0A3;
+  --line: #33393C;
+  --income: #4FAE7C;
+  --expense: #D9695F;
+  --gold: #D1A63B;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -27,6 +53,16 @@ body {
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tema-select {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 8px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 12.5px;
 }
 
 .hidden { display: none !important; }
